@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceptable Use Policy Agreement</title>
+  <link rel="stylesheet" href="aup.css">
+</head>
+<body>
+  <div class="aup-container">
+    <header class="aup-header">
+      <div class="logo-wrapper" id="logoWrapper">
+        <img id="orgLogo" src="../icons/icon-128.png" alt="Organization Logo">
+      </div>
+      <div class="header-text">
+        <div class="org-name" id="orgName">Organization</div>
+        <h1 class="policy-title" id="policyTitle">Acceptable Use Policy</h1>
+      </div>
+      <div class="version-badge" id="versionBadge">v1.0</div>
+    </header>
+
+    <div class="alert-banner" id="alertBanner" style="display: none;">
+      <span class="alert-icon">ℹ️</span>
+      <span class="alert-text" id="alertText">Please review and sign to continue browsing.</span>
+    </div>
+
+    <main class="policy-body">
+      <div class="markdown-content" id="policyContent">
+        <!-- Rendered markdown inserted here -->
+        <div class="loading-placeholder">Loading policy text...</div>
+      </div>
+    </main>
+
+    <footer class="signing-section">
+      <form id="agreementForm">
+        <div class="user-info-row">
+          <label for="userEmail">Signing as:</label>
+          <input type="text" id="userEmail" placeholder="user@company.com" required readonly>
+          <span class="managed-tag" id="managedTag">Managed Account</span>
+        </div>
+
+        <div class="checkbox-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="agreeCheckbox" required>
+            <span class="custom-checkbox"></span>
+            <span class="checkbox-text">
+              I have read, understand, and agree to comply with this <strong>Acceptable Use Policy</strong>.
+            </span>
+          </label>
+        </div>
+
+        <div class="initials-row" id="initialsContainer">
+          <div class="initials-header">
+            <label for="initialsCanvas">
+              Draw your initials below: <span class="required-star">*</span>
+            </label>
+            <button type="button" class="btn-text" id="clearCanvasBtn">Clear</button>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="initialsCanvas" width="320" height="120"></canvas>
+            <div class="canvas-placeholder" id="canvasHint">Sign initials with mouse, pen, or finger</div>
+          </div>
+
+          <div class="signature-preview-row">
+            <span class="preview-label">Optimized monochrome signature:</span>
+            <canvas id="thumbCanvas" width="160" height="60" class="thumb-canvas"></canvas>
+            <span class="signature-status" id="signatureStatus">Waiting for initials</span>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <div class="error-message" id="errorMessage" style="display: none;"></div>
+          <button type="submit" class="btn-primary" id="submitBtn" disabled>
+            <span class="btn-text-content">Agree &amp; Continue Browsing</span>
+            <span class="btn-spinner" id="btnSpinner" style="display: none;"></span>
+          </button>
+        </div>
+      </form>
+    </footer>
+  </div>
+
+  <script type="module" src="aup.js"></script>
+</body>
+</html>

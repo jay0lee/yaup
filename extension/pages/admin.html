@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAUP - Admin Policy Builder &amp; Configuration</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-app">
+    <!-- Top Header -->
+    <header class="admin-header">
+      <div class="header-branding">
+        <img src="../icons/icon-48.png" alt="YAUP Logo" class="admin-logo">
+        <div>
+          <h1>YAUP Policy Builder &amp; Admin Console</h1>
+          <p class="subtitle">Configure your Acceptable Use Policy and export JSON for Google Admin Console</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-secondary" id="saveDraftBtn">Save Local Draft</button>
+        <button type="button" class="btn-primary" id="exportJsonBtn">Export Policy JSON</button>
+      </div>
+    </header>
+
+    <!-- Main Workspace: Split Pane -->
+    <div class="admin-workspace">
+      <!-- Left Editor Pane -->
+      <aside class="editor-pane">
+        <nav class="tabs-nav">
+          <button type="button" class="tab-btn active" data-tab="general">1. Policy &amp; Version</button>
+          <button type="button" class="tab-btn" data-tab="content">2. AUP Text</button>
+          <button type="button" class="tab-btn" data-tab="triggers">3. Triggers &amp; Scope</button>
+          <button type="button" class="tab-btn" data-tab="webhook">4. Webhook &amp; Signature</button>
+          <button type="button" class="tab-btn" data-tab="export">5. Deploy to Google Admin</button>
+        </nav>
+
+        <form id="policyForm" class="editor-form">
+          <!-- Tab 1: General & Versioning -->
+          <section class="tab-content active" id="tab-general">
+            <h2>Policy Information &amp; Lifecycle</h2>
+            <p class="section-desc">Set organization branding, policy versioning, and re-signing intervals.</p>
+
+            <div class="form-group">
+              <label for="organizationName">Organization Name</label>
+              <input type="text" id="organizationName" placeholder="Acme Corporation" required>
+            </div>
+
+            <div class="form-group">
+              <label for="policyTitle">Policy Title</label>
+              <input type="text" id="policyTitle" placeholder="Corporate Acceptable Use Policy" required>
+            </div>
+
+            <div class="form-group">
+              <label for="logoUrl">Organization Logo URL</label>
+              <input type="url" id="logoUrl" placeholder="https://company.com/logo.png (Direct image link)">
+              <small class="field-hint">Leave blank to use default shield icon.</small>
+            </div>
+
+            <div class="card-highlight">
+              <h3>Version Tracking &amp; Re-signing Enforcement</h3>
+              <p class="card-desc">Whenever you increment the version string, all users will be prompted to re-sign upon their next browsing session.</p>
+
+              <div class="form-group">
+                <label for="aupVersion">Current AUP Version</label>
+                <div class="input-with-button">
+                  <input type="text" id="aupVersion" value="1.0" required>
+                  <button type="button" class="btn-secondary" id="bumpVersionBtn">+ Increment (+0.1)</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="expirationDays">Signature Expiration (Days)</label>
+                <input type="number" id="expirationDays" min="0" value="0">
+                <small class="field-hint">Set to <strong>0</strong> to never expire (valid until version is incremented). Set to <strong>30</strong>, <strong>90</strong>, or <strong>365</strong> for periodic re-acceptance.</small>
+                <div class="preset-buttons">
+                  <button type="button" class="btn-chip" data-days="0">Never (0)</button>
+                  <button type="button" class="btn-chip" data-days="30">30 Days</button>
+                  <button type="button" class="btn-chip" data-days="90">90 Days</button>
+                  <button type="button" class="btn-chip" data-days="365">1 Year (365)</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Tab 2: Content (Markdown) -->
+          <section class="tab-content" id="tab-content">
+            <h2>Acceptable Use Policy Text</h2>
+            <p class="section-desc">Write your organization's policy in Markdown. Changes update live in the preview.</p>
+
+            <div class="markdown-toolbar">
+              <button type="button" class="tool-btn" data-insert="# ">H1</button>
+              <button type="button" class="tool-btn" data-insert="## ">H2</button>
+              <button type="button" class="tool-btn" data-insert="### ">H3</button>
+              <button type="button" class="tool-btn" data-insert="**Bold**">B</button>
+              <button type="button" class="tool-btn" data-insert="*Italic*">I</button>
+              <button type="button" class="tool-btn" data-insert="- List Item">• List</button>
+              <button type="button" class="tool-btn" data-insert="> Blockquote">Quote</button>
+              <button type="button" class="tool-btn" data-insert="---">Divider</button>
+            </div>
+
+            <textarea id="policyMarkdown" rows="18" placeholder="Enter Markdown policy here..."></textarea>
+          </section>
+
+          <!-- Tab 3: Triggers & Scope -->
+          <section class="tab-content" id="tab-triggers">
+            <h2>Enforcement Triggers &amp; Whitelisting</h2>
+            <p class="section-desc">Specify when and where the policy prompt appears to users.</p>
+
+            <div class="form-group">
+              <label>Trigger Scope</label>
+              <div class="radio-card-group">
+                <label class="radio-card">
+                  <input type="radio" name="triggerScope" value="all" checked>
+                  <div class="radio-card-body">
+                    <strong>Any Internet Browsing</strong>
+                    <span>Blocks all non-whitelisted web navigation until the user signs.</span>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="triggerScope" value="pattern">
+                  <div class="radio-card-body">
+                    <strong>Specific URL Patterns Only</strong>
+                    <span>Only prompts the user when accessing internal/corporate websites (e.g., .corp, intranet).</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" id="patternGroup">
+              <label for="triggerPatterns">Target URL Patterns (one per line)</label>
+              <textarea id="triggerPatterns" rows="4" placeholder="*://*.corp/*&#10;*://internal.*/*"></textarea>
+              <small class="field-hint">Supports wildcards (e.g. <code>*://*.corp/*</code>, <code>*://internal.*/*</code>).</small>
+            </div>
+
+            <div class="form-group">
+              <label for="whitelistPatterns">Whitelisted Exempt Patterns (one per line)</label>
+              <textarea id="whitelistPatterns" rows="4" placeholder="https://accounts.google.com/*&#10;https://*.okta.com/*"></textarea>
+              <small class="field-hint">Users can access these URLs without signing (e.g., Single Sign-On, Identity Providers, Help Desk).</small>
+            </div>
+          </section>
+
+          <!-- Tab 4: Webhook & Signature -->
+          <section class="tab-content" id="tab-webhook">
+            <h2>Agreement Submission &amp; Signature</h2>
+            <p class="section-desc">Configure where signed agreements (user identity, timestamp, and low-res B/W initials) are POSTed.</p>
+
+            <div class="form-group checkbox-field">
+              <label class="checkbox-container">
+                <input type="checkbox" id="requireInitials" checked>
+                <span>Require user to draw initials on canvas</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label for="webhookUrl">Webhook POST Endpoint URL</label>
+              <input type="url" id="webhookUrl" placeholder="https://api.yourdomain.com/webhooks/aup-agreement">
+              <small class="field-hint">Signed agreements are sent as JSON with a compact monochrome PNG data URI.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="webhookAuthHeader">Authorization Header (Optional)</label>
+              <input type="text" id="webhookAuthHeader" placeholder="Bearer secret_token_xyz">
+            </div>
+
+            <div class="webhook-test-box">
+              <button type="button" class="btn-secondary" id="testWebhookBtn">Send Test Webhook Ping</button>
+              <span id="webhookTestResult" class="test-result"></span>
+            </div>
+          </section>
+
+          <!-- Tab 5: Export & Deploy -->
+          <section class="tab-content" id="tab-export">
+            <h2>Export &amp; Deploy to Chrome Enterprise</h2>
+            <p class="section-desc">Upload this JSON policy directly to your Google Workspace Admin Console.</p>
+
+            <div class="export-actions">
+              <button type="button" class="btn-primary" id="downloadPolicyJsonBtn">Download yaup-policy.json</button>
+              <button type="button" class="btn-secondary" id="copyPolicyJsonBtn">Copy JSON to Clipboard</button>
+            </div>
+
+            <div class="json-preview-box">
+              <label>Generated Policy JSON:</label>
+              <pre><code id="jsonCodeView">{}</code></pre>
+            </div>
+
+            <div class="deployment-guide">
+              <h3>Google Workspace Admin Console Instructions</h3>
+              <ol>
+                <li>Open <strong>admin.google.com</strong> and navigate to <strong>Devices &gt; Chrome &gt; Apps &amp; extensions &gt; Users &amp; browsers</strong>.</li>
+                <li>Find or add <strong>YAUP</strong> using its Extension ID and the update URL:
+                  <code>https://jay0lee.github.io/yaup/hosted/update.xml</code>
+                </li>
+                <li>Set Installation Policy to <strong>Force install</strong>.</li>
+                <li>Under <strong>Policy for extensions</strong>, upload the exported <code>yaup-policy.json</code> or paste the JSON text.</li>
+                <li>Click <strong>Save</strong>. Chrome will push the policy to all managed profiles and browsers!</li>
+              </ol>
+            </div>
+          </section>
+        </form>
+      </aside>
+
+      <!-- Right Live Preview Pane -->
+      <section class="preview-pane">
+        <div class="preview-header">
+          <span class="preview-title">Live Preview (What Users See)</span>
+          <span class="preview-badge" id="previewModeBadge">Interactive Simulation</span>
+        </div>
+        <div class="preview-frame-container">
+          <div class="preview-mockup">
+            <div class="mockup-header">
+              <div class="mockup-logo-wrap">
+                <img id="prevLogo" src="../icons/icon-128.png" alt="Logo">
+              </div>
+              <div class="mockup-titles">
+                <div class="mockup-org" id="prevOrg">Organization</div>
+                <div class="mockup-policy" id="prevTitle">Acceptable Use Policy</div>
+              </div>
+              <div class="mockup-badge" id="prevVersion">v1.0</div>
+            </div>
+
+            <div class="mockup-body" id="prevContent">
+              <!-- Rendered Markdown will go here -->
+            </div>
+
+            <div class="mockup-footer">
+              <div class="mockup-row">
+                <span class="mockup-signed-as">Signing as: <code>user@example.com</code></span>
+              </div>
+              <div class="mockup-row">
+                <label class="mockup-checkbox">
+                  <input type="checkbox" checked disabled>
+                  <span>I agree to comply with this Acceptable Use Policy.</span>
+                </label>
+              </div>
+              <div class="mockup-row" id="prevInitialsRow">
+                <span class="mockup-label">Initials Pad:</span>
+                <div class="mockup-canvas-box">
+                  <span class="mockup-canvas-text">[User draws initials here]</span>
+                </div>
+              </div>
+              <button class="mockup-btn" disabled>Agree &amp; Continue Browsing</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

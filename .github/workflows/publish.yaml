@@ -1,0 +1,76 @@
+name: Build and Publish YAUP
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'extension/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Set version string
+      run: |
+        extension_version=$(date +"%Y.%m%d.%H%M.%S")
+        echo "Extension version will be ${extension_version}"
+        echo "extension_version=${extension_version}" >> $GITHUB_ENV
+
+    - name: Update version in update.xml and manifest.json
+      env:
+        EXTENSION_KEY: ${{ secrets.EXTENSION_KEY }}
+      run: |
+        tmpfile=$(mktemp)
+        jq ".version = \"$extension_version\"" extension/manifest.json > "$tmpfile" && mv "$tmpfile" extension/manifest.json
+        cat extension/manifest.json
+
+        key_file="${HOME}/ext.pem"
+        echo -e "$EXTENSION_KEY" > "$key_file"
+        extension_id=$(bash ./get-extension-id.sh "$key_file")
+        echo "Our extension ID will be: ${extension_id}"
+
+        update_xml=$(cat update.xml.template)
+        update_xml="${update_xml//EXTENSION_VERSION/"$extension_version"}"
+        update_xml="${update_xml//GITHUB_OWNER/${{ github.repository_owner }}}"
+        update_xml="${update_xml//EXTENSION_ID/${extension_id}}"
+        update_xml="${update_xml//GITHUB_REPO/${GITHUB_REPOSITORY#*/}}"
+        mkdir -vp hosted
+        echo -e "$update_xml" > hosted/update.xml
+        cat hosted/update.xml
+
+    - name: Build extension with Chrome
+      run: |
+        key_file="${HOME}/ext.pem"
+        bash ./get-extension-id.sh "$key_file"
+        google-chrome-stable --pack-extension=./extension --pack-extension-key="$key_file"
+        rm -v "$key_file"
+        mv -v extension.crx hosted/extension.crx
+
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add --all
+        git diff --quiet && git diff --staged --quiet || git commit -am "Publish YAUP ${extension_version} [ci skip]"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}

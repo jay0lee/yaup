@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "aupVersion": {
+      "id": "aupVersion",
+      "type": "string",
+      "title": "AUP Version",
+      "description": "Policy version string (e.g., '1.0' or '2026.1'). Incrementing this requires all users to re-sign even if previously accepted."
+    },
+    "expirationDays": {
+      "id": "expirationDays",
+      "type": "integer",
+      "minimum": 0,
+      "title": "Signature Expiration (Days)",
+      "description": "Number of days before an agreement expires and requires re-signing. Set to 0 to never expire (valid until version increment)."
+    },
+    "policyTitle": {
+      "id": "policyTitle",
+      "type": "string",
+      "title": "Policy Title",
+      "description": "Title displayed at the top of the AUP agreement screen."
+    },
+    "policyMarkdown": {
+      "id": "policyMarkdown",
+      "type": "string",
+      "title": "Policy Text (Markdown)",
+      "description": "The Acceptable Use Policy content in Markdown format."
+    },
+    "organizationName": {
+      "id": "organizationName",
+      "type": "string",
+      "title": "Organization Name",
+      "description": "Name of the organization enforcing the policy."
+    },
+    "logoUrl": {
+      "id": "logoUrl",
+      "type": "string",
+      "title": "Organization Logo URL",
+      "description": "Direct HTTPS URL or base64 data URI of the organization logo."
+    },
+    "triggerScope": {
+      "id": "triggerScope",
+      "type": "string",
+      "enum": ["all", "pattern"],
+      "title": "Enforcement Trigger Scope",
+      "description": "Choose 'all' to require AUP on any internet browsing, or 'pattern' to enforce only on specific internal/corp URLs."
+    },
+    "triggerPatterns": {
+      "id": "triggerPatterns",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Trigger URL Patterns",
+      "description": "List of URL patterns (e.g. *://*.corp.company.com/*, *.internal) when triggerScope is 'pattern'."
+    },
+    "whitelistPatterns": {
+      "id": "whitelistPatterns",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Whitelisted URL Patterns",
+      "description": "List of URLs exempt from AUP (e.g. SSO/Identity providers, Help Desk, webhook endpoint)."
+    },
+    "requireInitials": {
+      "id": "requireInitials",
+      "type": "boolean",
+      "title": "Require Drawn Initials",
+      "description": "Require user to draw initials on canvas before allowing submission."
+    },
+    "webhookUrl": {
+      "id": "webhookUrl",
+      "type": "string",
+      "title": "Agreement Webhook URL",
+      "description": "HTTPS URL where agreement records and signature images are POSTed."
+    },
+    "webhookAuthHeader": {
+      "id": "webhookAuthHeader",
+      "type": "string",
+      "title": "Webhook Authorization Header",
+      "description": "Optional HTTP header value sent in Authorization header (e.g., 'Bearer <token>')."
+    }
+  }
+}
