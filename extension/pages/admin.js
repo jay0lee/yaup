@@ -32,6 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 8. Setup save and export actions
   setupExportActions();
 
+  // 9. Setup unmanaged test mode controls
+  setupTestModeControls();
+
   // Initial preview render
   updatePreview();
 });
@@ -356,3 +359,42 @@ function setupExportActions() {
     }
   });
 }
+
+function setupTestModeControls() {
+  const testAupBtn = document.getElementById("testAupScreenBtn");
+  const testToggle = document.getElementById("testInterceptionToggle");
+  const unmanagedCard = document.getElementById("unmanagedTestingCard");
+
+  if (currentPolicy.isManaged) {
+    if (unmanagedCard) unmanagedCard.style.display = "none";
+  }
+
+  // Launch test AUP screen in a new tab
+  if (testAupBtn) {
+    testAupBtn.addEventListener("click", async () => {
+      // Automatically save current draft so test tab sees the latest inputs
+      const data = collectFormData();
+      await chrome.storage.local.set({ adminPolicy: data });
+      chrome.tabs.create({
+        url: chrome.runtime.getURL("pages/aup.html?mode=test&redirect=" + encodeURIComponent("https://example.com"))
+      });
+    });
+  }
+
+  // Load and bind local simulation toggle
+  if (testToggle) {
+    chrome.storage.local.get(["testInterceptionEnabled"]).then((res) => {
+      testToggle.checked = Boolean(res.testInterceptionEnabled);
+    });
+
+    testToggle.addEventListener("change", async (e) => {
+      await chrome.storage.local.set({ testInterceptionEnabled: e.target.checked });
+      if (e.target.checked) {
+        alert("Live browsing interception simulation is now ENABLED for this browser.\nMatching web navigation will redirect to the AUP until agreed.");
+      } else {
+        alert("Live browsing interception simulation is now DISABLED. Normal browsing is uninterrupted.");
+      }
+    });
+  }
+}
+

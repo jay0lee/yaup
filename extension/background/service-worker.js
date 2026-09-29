@@ -28,6 +28,16 @@ async function checkNavigation(details) {
 
   try {
     const policy = await getActivePolicy();
+
+    // When running unmanaged (no cloud policy), do NOT enforce or block browsing
+    // unless the admin explicitly turned on local test interception
+    if (!policy.isManaged) {
+      const { testInterceptionEnabled } = await chrome.storage.local.get(["testInterceptionEnabled"]);
+      if (!testInterceptionEnabled) {
+        return; // Allow uninterrupted browsing in unmanaged mode
+      }
+    }
+
     const { agreementState } = await chrome.storage.local.get(["agreementState"]);
 
     // If agreement is valid (correct version and not expired), allow navigation

@@ -53,6 +53,26 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+/* Test Mode Banner */
+.test-mode-banner {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.test-banner-link {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.test-banner-link:hover {
+  color: #dbeafe;
 }
 
 /* Header */

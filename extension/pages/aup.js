@@ -14,9 +14,16 @@ let redirectUrl = "";
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
   redirectUrl = urlParams.get("redirect") || "";
+  const isTestMode = urlParams.get("mode") === "test";
 
   // 1. Load active policy
   activePolicy = await getActivePolicy();
+
+  // Display test banner if running unmanaged or launched in test mode
+  if (!activePolicy.isManaged || isTestMode) {
+    const testBanner = document.getElementById("testModeBanner");
+    if (testBanner) testBanner.style.display = "flex";
+  }
 
   // 2. Render Policy UI
   document.getElementById("policyTitle").textContent = activePolicy.policyTitle || "Acceptable Use Policy";
