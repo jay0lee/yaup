@@ -37,7 +37,7 @@ jobs:
         EXTENSION_KEY: ${{ secrets.EXTENSION_KEY }}
       run: |
         tmpfile=$(mktemp)
-        jq ".version = \"$extension_version\"" extension/manifest.json > "$tmpfile" && mv "$tmpfile" extension/manifest.json
+        jq ".version = \"$extension_version\" | .update_url = \"https://${{ github.repository_owner }}.github.io/${GITHUB_REPOSITORY#*/}/hosted/update.xml\"" extension/manifest.json > "$tmpfile" && mv "$tmpfile" extension/manifest.json
         cat extension/manifest.json
 
         key_file="${HOME}/ext.pem"

@@ -3,6 +3,7 @@
   "name": "YAUP - Your Acceptable Use Policy",
   "version": "2026.0929.1437.08",
   "description": "Presents an organization's Acceptable Use Policy and requires users to agree before browsing.",
+  "update_url": "https://jay0lee.github.io/yaup/hosted/update.xml",
   "permissions": [
     "storage",
     "identity",
