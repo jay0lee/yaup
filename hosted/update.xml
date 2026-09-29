@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
   <app appid='lbaohcmeojjclbdiohgnmnefdghehceh'>
-    <updatecheck codebase='https://jay0lee.github.io/yaup/hosted/extension.crx' version='2026.0929.1414.02' />
+    <updatecheck codebase='https://jay0lee.github.io/yaup/hosted/extension.crx' version='2026.0929.1423.29' />
   </app>
 </gupdate>
