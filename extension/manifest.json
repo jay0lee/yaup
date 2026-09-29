@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YAUP - Your Acceptable Use Policy",
-  "version": "1.0.0.0",
+  "version": "2026.0929.1401.56",
   "description": "Presents an organization's Acceptable Use Policy and requires users to agree before browsing.",
   "permissions": [
     "storage",
