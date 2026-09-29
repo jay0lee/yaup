@@ -188,12 +188,6 @@ function setupScrollRequirement() {
       updateSubmitState();
     }
   });
-
-  if (scrollBottomBtn) {
-    scrollBottomBtn.addEventListener("click", () => {
-      policyBody.scrollTo({ top: policyBody.scrollHeight, behavior: "smooth" });
-    });
-  }
 }
 
 function updateSubmitState() {
