@@ -209,6 +209,7 @@ body {
 .form-group input[type="url"],
 .form-group input[type="number"],
 .form-group textarea {
+  width: 100%;
   padding: 8px 12px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -216,6 +217,7 @@ body {
   font-family: inherit;
   color: var(--text-main);
   background-color: #ffffff;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -233,6 +235,7 @@ body {
 .input-with-button {
   display: flex;
   gap: 8px;
+  width: 100%;
 }
 
 .input-with-button input {
@@ -266,22 +269,31 @@ body {
   margin-top: 6px;
 }
 
-/* Markdown Toolbar */
-.markdown-toolbar {
+/* Markdown Toolbar & Full-Width Textarea */
+.markdown-editor-container {
   display: flex;
-  gap: 4px;
+  flex-direction: column;
+  width: 100%;
+}
+
+.markdown-toolbar {
+  width: 100%;
+  display: flex;
+  gap: 6px;
   background-color: #f8fafc;
   border: 1px solid var(--border-color);
   border-bottom: none;
   border-radius: 6px 6px 0 0;
-  padding: 6px 8px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .tool-btn {
   background-color: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -292,10 +304,24 @@ body {
 }
 
 #policyMarkdown {
+  width: 100%;
+  min-height: 440px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
   border-radius: 0 0 6px 6px;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-main);
+  background-color: #ffffff;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+#policyMarkdown:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
 }
 
 /* Radio Card Group */
