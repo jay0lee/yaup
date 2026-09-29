@@ -70,6 +70,12 @@
       "title": "Require Drawn Initials",
       "description": "Require user to draw initials on canvas before allowing submission."
     },
+    "requireScrollToBottom": {
+      "id": "requireScrollToBottom",
+      "type": "boolean",
+      "title": "Require Scroll to Bottom",
+      "description": "Require user to scroll through the full text of the policy before enabling the agreement checkbox."
+    },
     "webhookUrl": {
       "id": "webhookUrl",
       "type": "string",

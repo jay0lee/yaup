@@ -79,6 +79,7 @@ function populateForm(policy) {
 
   // Signature & Webhook
   document.getElementById("requireInitials").checked = policy.requireInitials ?? true;
+  document.getElementById("requireScrollToBottom").checked = policy.requireScrollToBottom ?? true;
   document.getElementById("webhookUrl").value = policy.webhookUrl || "";
   document.getElementById("webhookAuthHeader").value = policy.webhookAuthHeader || "";
 }
@@ -111,6 +112,7 @@ function collectFormData() {
     triggerPatterns: triggerLines,
     whitelistPatterns: whitelistLines,
     requireInitials: document.getElementById("requireInitials").checked,
+    requireScrollToBottom: document.getElementById("requireScrollToBottom").checked,
     webhookUrl: document.getElementById("webhookUrl").value.trim(),
     webhookAuthHeader: document.getElementById("webhookAuthHeader").value.trim()
   };
@@ -215,6 +217,7 @@ function updateJsonView() {
     triggerPatterns: { Value: data.triggerPatterns },
     whitelistPatterns: { Value: data.whitelistPatterns },
     requireInitials: { Value: data.requireInitials },
+    requireScrollToBottom: { Value: data.requireScrollToBottom },
     webhookUrl: { Value: data.webhookUrl },
     webhookAuthHeader: { Value: data.webhookAuthHeader }
   };
@@ -327,6 +330,7 @@ function setupExportActions() {
       triggerPatterns: { Value: data.triggerPatterns },
       whitelistPatterns: { Value: data.whitelistPatterns },
       requireInitials: { Value: data.requireInitials },
+      requireScrollToBottom: { Value: data.requireScrollToBottom },
       webhookUrl: { Value: data.webhookUrl },
       webhookAuthHeader: { Value: data.webhookAuthHeader }
     };

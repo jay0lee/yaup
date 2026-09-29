@@ -45,6 +45,7 @@ By checking the box and drawing your initials below, you acknowledge that you ha
     "https://*.okta.com/*"
   ],
   requireInitials: true,
+  requireScrollToBottom: true,
   webhookUrl: "",
   webhookAuthHeader: ""
 };

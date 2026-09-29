@@ -10,6 +10,7 @@ let activePolicy = null;
 let signaturePad = null;
 let userProfile = { email: "", id: "" };
 let redirectUrl = "";
+let hasScrolledToBottom = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -41,6 +42,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Render markdown content
   const contentEl = document.getElementById("policyContent");
   contentEl.innerHTML = parseMarkdown(activePolicy.policyMarkdown);
+
+  // Setup scroll-to-bottom requirement
+  setupScrollRequirement();
 
   // 3. Check previous agreement state (for update/expiration notices)
   const { agreementState } = await chrome.storage.local.get(["agreementState"]);
@@ -135,6 +139,63 @@ async function resolveUserIdentity() {
   managedTag.style.color = "#475569";
 }
 
+function setupScrollRequirement() {
+  const policyBody = document.getElementById("policyBody");
+  const agreeCheckbox = document.getElementById("agreeCheckbox");
+  const checkboxLabel = document.getElementById("checkboxLabel");
+  const scrollNotice = document.getElementById("scrollNotice");
+  const scrollIndicator = document.getElementById("scrollIndicator");
+  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+
+  const requireScroll = activePolicy.requireScrollToBottom ?? true;
+
+  if (!requireScroll) {
+    hasScrolledToBottom = true;
+    agreeCheckbox.disabled = false;
+    checkboxLabel.classList.remove("disabled");
+    scrollNotice.style.display = "none";
+    scrollIndicator.style.display = "none";
+    return;
+  }
+
+  // Check if content naturally fits without scrolling
+  requestAnimationFrame(() => {
+    const isScrollable = policyBody.scrollHeight > policyBody.clientHeight + 30;
+    if (!isScrollable) {
+      hasScrolledToBottom = true;
+      agreeCheckbox.disabled = false;
+      checkboxLabel.classList.remove("disabled");
+      scrollNotice.style.display = "none";
+      scrollIndicator.style.display = "none";
+    } else {
+      hasScrolledToBottom = false;
+      agreeCheckbox.disabled = true;
+      checkboxLabel.classList.add("disabled");
+      scrollNotice.style.display = "inline-block";
+      scrollIndicator.style.display = "flex";
+    }
+  });
+
+  policyBody.addEventListener("scroll", () => {
+    if (hasScrolledToBottom) return;
+    const atBottom = (policyBody.scrollTop + policyBody.clientHeight) >= (policyBody.scrollHeight - 35);
+    if (atBottom) {
+      hasScrolledToBottom = true;
+      agreeCheckbox.disabled = false;
+      checkboxLabel.classList.remove("disabled");
+      scrollNotice.style.display = "none";
+      scrollIndicator.style.display = "none";
+      updateSubmitState();
+    }
+  });
+
+  if (scrollBottomBtn) {
+    scrollBottomBtn.addEventListener("click", () => {
+      policyBody.scrollTo({ top: policyBody.scrollHeight, behavior: "smooth" });
+    });
+  }
+}
+
 function updateSubmitState() {
   const checkbox = document.getElementById("agreeCheckbox");
   const canvas = document.getElementById("initialsCanvas");
@@ -145,7 +206,7 @@ function updateSubmitState() {
   const hasStrokes = hasDrawnContent(canvas);
   const hasEmail = emailInput.value.trim().length > 0;
 
-  submitBtn.disabled = !(isChecked && hasStrokes && hasEmail);
+  submitBtn.disabled = !(isChecked && hasStrokes && hasEmail && hasScrolledToBottom);
 }
 
 async function handleSubmit(e) {

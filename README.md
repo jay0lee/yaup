@@ -176,6 +176,7 @@ When a user signs the AUP, a `POST` request with `Content-Type: application/json
 | `triggerPatterns` | Array | `["*://*.corp/*", ...]` | URL match patterns when `triggerScope` is `"pattern"`. |
 | `whitelistPatterns` | Array | `["https://accounts.google.com/*", ...]` | URLs exempt from interception (e.g. SSO endpoints). |
 | `requireInitials` | Boolean | `true` | Requires drawing initials on canvas before agreeing. |
+| `requireScrollToBottom` | Boolean | `true` | Requires user to scroll through the full text of the policy before unlocking agreement. |
 | `webhookUrl` | String | `""` | HTTPS endpoint where agreement records are POSTed. |
 | `webhookAuthHeader` | String | `""` | Optional authorization header value (e.g., `Bearer <token>`). |
 
